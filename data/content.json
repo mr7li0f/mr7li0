@@ -1,0 +1,49 @@
+{
+  "site": {
+    "title": "محمد أبو ريان — مصمم هوية بصرية",
+    "subtitle": "مصمم شعارات وهوية بصرية — Logo & Brand Designer",
+    "footer": "جميع الحقوق محفوظة — mr7li0"
+  },
+  "sections": [
+    {
+      "id": "about",
+      "title": "عنّا",
+      "description": "مصمم جرافيك متخصص في الشعارات والهوية البصرية والخط العربي.",
+      "order": 1,
+      "visible": true,
+      "subsections": [
+        {
+          "id": "bio",
+          "title": "نبذة قصيرة",
+          "order": 1,
+          "content": "أعمل في مجال التصميم منذ أكثر من 10 سنوات. أختص بالشعارات والهوية البصرية والتايبوغرافي العربي.",
+          "image": "images/badr/sample1.jpg"
+        }
+      ]
+    },
+    {
+      "id": "projects",
+      "title": "المشاريع",
+      "description": "نماذج من أعمالي عبر سنوات عملي.",
+      "order": 2,
+      "layout": "cards",
+      "visible": true,
+      "subsections": [
+        {
+          "id": "p-1",
+          "title": "هوية علامة تجارية — Project A",
+          "order": 1,
+          "summary": "هوية متكاملة لشركة تقنية مع تطبيقات متعددة.",
+          "image": "images/badr/sample2.jpg"
+        },
+        {
+          "id": "p-2",
+          "title": "شعار فاخر — Project B",
+          "order": 2,
+          "summary": "شعار لعلامة تجارية فاخرة في قطاع التجزئة.",
+          "image": "images/badr/sample3.jpg"
+        }
+      ]
+    }
+  ]
+}

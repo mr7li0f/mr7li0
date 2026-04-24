@@ -1,0 +1,148 @@
+
+/* Local Qahwa font for Arabic text (file must exist at project root: Qahwa Arabic Medium.otf) */
+@font-face {
+	font-family: 'QahwaLocal';
+	src: url('../Qahwa Arabic Medium.otf') format('opentype');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+	/* Limit this font to Arabic unicode ranges so it only supplies Arabic glyphs */
+	unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+1EE00-1EEFF;
+}
+
+/* Use QahwaLocal in the font stack globally — the browser will use it only for Arabic glyphs
+	 because of the unicode-range above. This ensures Arabic characters (names, paragraphs)
+	 render with Qahwa while Latin text keeps the original fonts. */
+html, body {
+	font-family: 'Playfair Display', 'QahwaLocal', 'Cairo', sans-serif;
+}
+
+/* Core site styling (kept minimal; main site already includes lots of styles) */
+:root{--accent:#6366f1;--muted:#94a3b8;--bg:#020617;--card:#0b1220}
+html,body{height:100%;margin:0;font-family: Cairo, 'Playfair Display', serif;background:var(--bg);color:#fff}
+.container{max-width:1200px;margin:40px auto;padding:0 20px}
+.section{margin:48px 0;padding:28px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04)}
+.section .title{font-size:22px;font-weight:900;margin-bottom:12px;color:var(--accent)}
+.subsection{display:flex;gap:20px;align-items:flex-start}
+.subsection .thumb{width:160px;height:100px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.04)}
+.subsection .body{flex:1}
+.subsection .body h3{margin:0 0 8px 0;font-size:18px}
+.subsection .body p{margin:0;color:var(--muted);line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+
+/* Restore original project-card visual style from main stylesheet */
+.project-card {
+	background: linear-gradient(135deg,
+		rgba(99, 102, 241, 0.08) 0%,
+		rgba(139, 92, 246, 0.06) 50%,
+		rgba(168, 85, 247, 0.04) 100%);
+	border: 1px solid rgba(255, 255, 255, 0.10);
+	border-top: 1px solid rgba(255, 255, 255, 0.22);
+	border-left: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 26px;
+	overflow: hidden;
+	cursor: pointer;
+	transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+	aspect-ratio: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
+	-webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
+	box-shadow:
+		0 4px 24px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.12),
+		inset 0 -1px 0 rgba(99, 102, 241, 0.08);
+}
+
+.project-card::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 15%; right: 15%;
+	height: 1px;
+	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+	border-radius: 1px;
+	z-index: 1;
+}
+
+.project-card:hover {
+	transform: translateY(-10px);
+	border-color: rgba(99, 102, 241, 0.45);
+	border-top-color: rgba(255, 255, 255, 0.28);
+	background: linear-gradient(135deg,
+		rgba(99, 102, 241, 0.13) 0%,
+		rgba(139, 92, 246, 0.09) 50%,
+		rgba(168, 85, 247, 0.07) 100%);
+	box-shadow:
+		0 24px 64px rgba(99, 102, 241, 0.35),
+		0 0 80px rgba(99, 102, 241, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.18),
+		inset 0 -1px 0 rgba(99, 102, 241, 0.12);
+}
+.loading{color:var(--muted);text-align:center;padding:40px 0}
+.footer{padding:24px;text-align:center;color:var(--muted);font-size:14px}
+
+@media (max-width:720px){.subsection{flex-direction:column}.subsection .thumb{width:100%;height:180px}}
+
+/* Force Qahwa for Arabic glyphs on visible text while excluding images/SVG/code */
+html[lang="ar"] body, html[lang="ar"] body :not(svg):not(canvas):not(img):not(code):not(pre) {
+	font-family: 'QahwaLocal', 'Cairo', sans-serif !important;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Strong overrides for specific heading selectors that were set inline to Cairo
+   Ensure these prominent headings use QahwaLocal instead. Loaded after the
+   page CSS so the later rules win. */
+html[lang="ar"] .hero-content h1,
+html[lang="ar"] .page-header h1,
+html[lang="ar"] .project-content h3,
+html[lang="ar"] .subcategory-card h3,
+html[lang="ar"] .section-title,
+html[lang="ar"] .section-subtitle,
+html[lang="ar"] .subtitle,
+html[lang="ar"] .footer-text {
+	font-family: 'QahwaLocal', 'Cairo', sans-serif !important;
+}
+
+/* Hide decorative ornaments (stars) around section titles */
+.section-ornament { display: none !important; }
+
+/* Remove decorative icon circle inside subcategory cards */
+.subcategory-card-icon { display: none !important; }
+
+/* Make subcategory title larger and centered (already flex-centered) */
+.subcategory-card h3 {
+	font-size: 26px !important;
+	line-height: 1.15 !important;
+	text-align: center !important;
+	font-weight: 900 !important;
+}
+
+/* Ensure project card headings also use Qahwa when Arabic */
+.project-content h3 { font-family: 'QahwaLocal', 'Playfair Display', 'Cairo', sans-serif !important; }
+
+/* Top-nav corner socials */
+.top-nav-social { display:inline-flex; gap:10px; align-items:center; }
+.corner-social { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; color:#fff; background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(168,85,247,0.08)); border:1px solid rgba(99,102,241,0.25); }
+.corner-social svg { width:18px; height:18px; }
+
+/* align corner socials: right in LTR, left in RTL */
+.top-nav-social { margin-left: auto; }
+html[dir="rtl"] .top-nav-social { margin-left: 0; margin-right: auto; }
+
+/* Footer social corner */
+.footer { position: relative; }
+.footer-social { position: absolute; bottom: 18px; right: 20px; display:flex; gap:10px; }
+html[dir="rtl"] .footer-social { right: auto; left: 20px; }
+
+/* Contact icons next to email */
+.email-container { display:flex; align-items:center; gap:12px; justify-content:center; }
+.email-link { display:inline-flex; align-items:center; gap:8px; color:inherit; text-decoration:none; font-weight:600; }
+.email-icon { opacity:0.9 }
+.contact-icons { display:flex; gap:8px; align-items:center }
+.contact-icon { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:#fff; }
+.contact-icon svg { width:16px; height:16px }
+
+

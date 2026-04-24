@@ -1,0 +1,40 @@
+{
+  "name": "Mohammad Abu Rayyan",
+  "name_ar": "محمد أبو ريان",
+  "title": "Graphic Designer",
+  "title_ar": "مصمم جرافيك",
+  "description": { "en": "", "ar": "" },
+  "email": "mr7li0f@gmail.com",
+  "social": {
+    "behance": "https://www.behance.net/mr7li0",
+    "tiktok": "http://tiktok.com/@mr7li0",
+    "instagram": "https://www.instagram.com/mr7li0",
+    "telegram": "https://t.me/mr7li0"
+  },
+  "contact": {
+    "instagram": "https://ig.me/m/mr7li0",
+    "telegram": "https://t.me/mr7lio"
+  },
+  "projects": [
+    {
+      "title": { "en": "Logos", "ar": "شعارات" },
+      "category": { "en": "Logo Design", "ar": "تصميم الشعارات" },
+      "icon": "🎨",
+      "subcategories": [
+        { "title": { "en": "Diwani Script", "ar": "الخط الديواني" }, "images": ["images/logo-diwani-1.jpg", "images/logo-diwani-2.jpg", "images/logo-diwani-3.jpg"] },
+        { "title": { "en": "Thuluth Script", "ar": "خط الثلث" }, "images": ["images/logo-thuluth-0.jpg", "images/logo-thulth-1.jpg"] },
+        { "title": { "en": "Free Script", "ar": "الخط الحر" }, "images": [] },
+        { "title": { "en": "Other Styles", "ar": "أنماط مختلفة" }, "images": ["images/logo-style-1.jpg", "images/logo-style-2.jpg"] }
+      ]
+    },
+    {
+      "title": { "en": "Visual Identity", "ar": "الهوية البصرية" },
+      "category": { "en": "Visual Identity", "ar": "تصميم الهوية البصرية" },
+      "icon": "🎯",
+      "subcategories": [
+        { "title": { "en": "Badr Perfume", "ar": "عطور بدر" }, "images": ["images/badr/cover.jpg","images/badr/guide-fonts.jpg","images/badr/guide-colors.jpg","images/badr/show.jpg","images/badr/app1.jpg","images/badr/app2.jpg","images/badr/33.jpg"] },
+        { "title": { "en": "Asila & natch", "ar": "أصيلة وناتش" }, "images": ["images/New folder (2)/6.jpg","images/New folder (2)/1.jpg","images/New folder (2)/2.jpg","images/New folder (2)/3.jpg","images/New folder (2)/4.jpg","images/New folder (2)/5.jpg"] }
+      ]
+    }
+  ]
+}

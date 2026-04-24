@@ -1,0 +1,125 @@
+backend:
+  name: github
+  repo: "YOUR_GITHUB_USERNAME/YOUR_REPO" # <-- استبدل هذا بمستخدمك/مستودعك
+  branch: "main"
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+# Files collection: single JSON file that drives the whole site
+collections:
+  - name: "content"
+    label: "Site Content"
+    label_singular: "Content"
+    editor:
+      preview: false
+    files:
+      - file: "data/content.json"
+        label: "Main Content (JSON)"
+        name: "content_json"
+        fields:
+          - {label: "Site Title", name: "site.title", widget: "string"}
+          - {label: "Site Subtitle", name: "site.subtitle", widget: "string", required: false}
+          - {label: "Footer Text", name: "site.footer", widget: "string", required: false}
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            fields:
+              - {label: "ID", name: "id", widget: "string", required: false}
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text", required: false}
+              - {label: "Order", name: "order", widget: "number", default: 0}
+              - {label: "Visible", name: "visible", widget: "boolean", default: true}
+              - {label: "Layout", name: "layout", widget: "select", options: ["default","cards"], default: "default"}
+              - label: "Subsections"
+                name: "subsections"
+                widget: "list"
+                fields:
+                  - {label: "ID", name: "id", widget: "string", required: false}
+                  - {label: "Title", name: "title", widget: "string"}
+                  - {label: "Order", name: "order", widget: "number", default: 0}
+                  - {label: "Content (HTML)", name: "content", widget: "markdown", required: false}
+                  - {label: "Summary", name: "summary", widget: "string", required: false}
+                  - {label: "Image", name: "image", widget: "image", required: false}
+                  - label: "Links"
+                    name: "links"
+                    widget: "list"
+                    required: false
+                    fields:
+                      - {label: "Label", name: "label", widget: "string"}
+                      - {label: "URL", name: "url", widget: "string"}
+
+  - name: "site"
+    label: "Site Settings"
+    editor:
+      preview: false
+    files:
+      - file: "data/config.json"
+        label: "Main Site Config"
+        name: "site_config"
+        fields:
+          - {label: "Name (EN)", name: "name", widget: "string"}
+          - {label: "Name (AR)", name: "name_ar", widget: "string"}
+          - {label: "Title (EN)", name: "title", widget: "string"}
+          - {label: "Title (AR)", name: "title_ar", widget: "string"}
+          - label: "Description"
+            name: "description"
+            widget: "object"
+            fields:
+              - {label: "English", name: "en", widget: "text", required: false}
+              - {label: "Arabic", name: "ar", widget: "text", required: false}
+          - {label: "Email", name: "email", widget: "string"}
+          - label: "Social Links"
+            name: "social"
+            widget: "object"
+            fields:
+              - {label: "Behance", name: "behance", widget: "string", required: false}
+              - {label: "TikTok", name: "tiktok", widget: "string", required: false}
+              - {label: "Instagram", name: "instagram", widget: "string", required: false}
+              - {label: "Telegram", name: "telegram", widget: "string", required: false}
+          - label: "Contact Links (next to email)"
+            name: "contact"
+            widget: "object"
+            fields:
+              - {label: "Instagram (contact)", name: "instagram", widget: "string", required: false}
+              - {label: "Telegram (contact)", name: "telegram", widget: "string", required: false}
+          - label: "Projects"
+            name: "projects"
+            widget: "list"
+            fields:
+              - label: "Title"
+                name: "title"
+                widget: "object"
+                fields:
+                  - {label: "English", name: "en", widget: "string"}
+                  - {label: "Arabic", name: "ar", widget: "string"}
+              - label: "Category"
+                name: "category"
+                widget: "object"
+                fields:
+                  - {label: "English", name: "en", widget: "string"}
+                  - {label: "Arabic", name: "ar", widget: "string"}
+              - {label: "Icon", name: "icon", widget: "string", required: false}
+              - label: "Subcategories"
+                name: "subcategories"
+                widget: "list"
+                fields:
+                  - label: "Title"
+                    name: "title"
+                    widget: "object"
+                    fields:
+                      - {label: "English", name: "en", widget: "string"}
+                      - {label: "Arabic", name: "ar", widget: "string"}
+                  - label: "Images"
+                    name: "images"
+                    widget: "list"
+                    required: false
+                    field:
+                      label: "Image"
+                      name: "image"
+                      widget: "image"
+
+# Notes:
+# - Replace repo with your GitHub repo (owner/name).
+# - For image uploads to work you must configure a GitHub OAuth App
+#   and set the Client ID in repository settings (or use Git Gateway).
