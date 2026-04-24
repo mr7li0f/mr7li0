@@ -17,7 +17,7 @@
           "title": "نبذة قصيرة",
           "order": 1,
           "content": "أعمل في مجال التصميم منذ أكثر من 10 سنوات. أختص بالشعارات والهوية البصرية والتايبوغرافي العربي.",
-          "image": "images/badr/sample1.jpg"
+          "image": "images/badr/cover.jpg"
         }
       ]
     },
@@ -34,14 +34,14 @@
           "title": "هوية علامة تجارية — Project A",
           "order": 1,
           "summary": "هوية متكاملة لشركة تقنية مع تطبيقات متعددة.",
-          "image": "images/badr/sample2.jpg"
+          "image": "images/badr/show.jpg"
         },
         {
           "id": "p-2",
           "title": "شعار فاخر — Project B",
           "order": 2,
           "summary": "شعار لعلامة تجارية فاخرة في قطاع التجزئة.",
-          "image": "images/badr/sample3.jpg"
+          "image": "images/badr/app1.jpg"
         }
       ]
     }

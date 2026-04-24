@@ -195,4 +195,22 @@ html[dir="rtl"] .footer-left { align-items:flex-end; }
 	html[dir="rtl"] .top-nav-buttons { left: 12px; right: auto; }
 }
 
+/* Mobile-specific fixes: keep nav buttons in flow to avoid overlap */
+@media (max-width: 600px) {
+	.top-nav { padding: 10px 12px; }
+	.top-nav-content { padding-left: 12px; padding-right: 12px; }
+	.top-nav-buttons {
+		position: static !important;
+		top: auto !important;
+		right: auto !important;
+		left: auto !important;
+		transform: none !important;
+		gap: 8px;
+		margin-top: 8px;
+		justify-content: flex-end;
+	}
+	.top-nav-button { padding: 8px 12px; font-size: 13px; }
+	.nav-icon-button { width: 36px; height: 36px; }
+}
+
 
