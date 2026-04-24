@@ -1,7 +1,14 @@
 /* app.js — dynamic renderer that reads data/content.json and renders sections/subsections */
 (function(){
   // Try relative paths first so file:// and simple hosts work
-  const CANDIDATE_PATHS = ['data/content.json','./data/content.json','/data/content.json'];
+  const CANDIDATE_PATHS = ['./data/content.json','data/content.json'];
+  function normalizePath(path){
+    if(!path) return path;
+    if(/^https?:\/\//i.test(path) || path.startsWith('data:') || path.startsWith('blob:')) return path;
+    if(path.startsWith('./') || path.startsWith('../')) return path;
+    if(path.startsWith('/')) path = path.slice(1);
+    return './' + path;
+  }
   const root = document.getElementById('app') || document.querySelector('.container') || document.body;
 
   function el(tag, attrs={}, children=[]){
@@ -32,9 +39,9 @@
       const grid = el('div',{class:'grid'});
       // If subsections marked as 'asCards' render card grid
       if(section.layout === 'cards'){
-        section.subsections.sort((a,b)=>(a.order||0)-(b.order||0)).forEach(sub=>{
+          section.subsections.sort((a,b)=>(a.order||0)-(b.order||0)).forEach(sub=>{
           const card = el('article',{class:'project-card'});
-          if(sub.image) card.appendChild(el('img',{src:sub.image,alt:sub.title||'',class:'thumb'}));
+          if(sub.image) card.appendChild(el('img',{src:normalizePath(sub.image),alt:sub.title||'',class:'thumb'}));
           card.appendChild(el('h3',{text:sub.title||'Project'}));
           if(sub.summary) card.appendChild(el('p',{text:sub.summary}));
           grid.appendChild(card);
@@ -43,7 +50,7 @@
       } else {
         section.subsections.sort((a,b)=>(a.order||0)-(b.order||0)).forEach(sub=>{
           const item = el('div',{class:'subsection'});
-          if(sub.image) item.appendChild(el('img',{src:sub.image,alt:sub.title||'',class:'thumb'}));
+          if(sub.image) item.appendChild(el('img',{src:normalizePath(sub.image),alt:sub.title||'',class:'thumb'}));
           const body = el('div',{class:'body'});
           body.appendChild(el('h3',{text:sub.title||'Item'}));
           if(sub.content) safeHTML(body, `<p>${sub.content}</p>`);
@@ -92,9 +99,8 @@
     }
 
     if(!json){
-      // Helpful hint for common local-file issue
-      root.innerHTML = `<p class="loading">لم أستطع تحميل المحتوى. تأكد من وجود الملف <strong>data/content.json</strong>، أو شغّل خادم محلي ثم جرّب التحديث.<br>تشغيل سريع محلياً: <code>python -m http.server 8000</code></p>`;
-      console.error('Failed to fetch data/content.json from candidate paths:', CANDIDATE_PATHS);
+      // Don't overwrite the entire page on fetch failure (avoids hiding the HTML when fetch fails on GH Pages)
+      console.warn('Failed to fetch data/content.json from candidate paths:', CANDIDATE_PATHS);
       return;
     }
 

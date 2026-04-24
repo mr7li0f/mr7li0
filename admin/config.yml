@@ -4,7 +4,7 @@ backend:
   branch: "main"
 
 media_folder: "images/uploads"
-public_folder: "/images/uploads"
+public_folder: "images/uploads"
 
 # Files collection: single JSON file that drives the whole site
 collections:

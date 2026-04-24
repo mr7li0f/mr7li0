@@ -2051,8 +2051,7 @@
 
   </style>
   <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
-  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <!-- Removed platform-specific SDK scripts to avoid 404s on GitHub Pages -->
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
   <link rel="stylesheet" href="css/styles.css">
  </head>
@@ -2076,12 +2075,15 @@
    <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline>
    </svg></button>
   <nav class="top-nav">
-   <div class="top-nav-content">
+    <div class="top-nav-content">
     <div class="top-nav-logo" onclick="goHome()">
      mr7li0
     </div>
-    <div class="top-nav-social" id="topNavSocial" aria-hidden="false"></div>
-    <div class="top-nav-buttons"><a class="top-nav-button" id="topNavWork" onclick="scrollToWork()">Works</a> <a class="top-nav-button" id="topNavContact" onclick="scrollToContact()">Contact</a> <button class="nav-icon-button" onclick="toggleLanguage()" id="navLanguageToggle" aria-label="Toggle Language">EN</button>
+    <div class="top-nav-buttons">
+      <a class="top-nav-button" id="topNavWork" onclick="scrollToWork()">Works</a>
+      <a class="top-nav-button" id="topNavContact" onclick="scrollToContact()">Contact</a>
+      <a class="top-nav-button" id="topNavAccounts" onclick="scrollToAccounts()">حساباتي</a>
+      <button class="nav-icon-button" onclick="toggleLanguage()" id="navLanguageToggle" aria-label="Toggle Language">EN</button>
     </div>
    </div>
   </nav>
@@ -2237,7 +2239,8 @@
         allRightsReserved: 'All rights reserved',
         imageOf: 'Image',
         of: 'of',
-        images: 'images'
+        images: 'images',
+        accounts: 'My Accounts'
       },
       ar: {
         work: 'الأعمال',
@@ -2257,7 +2260,8 @@
         allRightsReserved: 'جميع الحقوق محفوظة',
         imageOf: 'صورة',
         of: 'من',
-        images: 'صورة'
+        images: 'صورة',
+        accounts: 'حساباتي'
       }
     };
 
@@ -2291,8 +2295,10 @@
     function updateNavText() {
       const topNavWork = document.getElementById('topNavWork');
       const topNavContact = document.getElementById('topNavContact');
+      const topNavAccounts = document.getElementById('topNavAccounts');
       if (topNavWork) topNavWork.textContent = t('work');
       if (topNavContact) topNavContact.textContent = t('contact');
+      if (topNavAccounts) topNavAccounts.textContent = t('accounts');
     }
 
     function renderHomePage() {
@@ -2342,27 +2348,29 @@
             <h2>${t('letsCreate')}</h2>
             <p>${t('contactMessage')}</p>
             <div class="email-container">
-              <a class="email-link" href="mailto:${CONFIG.email}" target="_blank" rel="noopener noreferrer">
-                <svg class="email-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8.2v7.6A2.2 2.2 0 0 0 5.2 18h13.6A2.2 2.2 0 0 0 21 15.8V8.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 6.5l-9 6-9-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="email-text">${CONFIG.email}</span>
-              </a>
-              <div class="contact-icons">
+              <div class="contact-actions">
+                <a class="contact-btn email-btn" href="mailto:${CONFIG.email}" aria-label="Email" title="${CONFIG.email}">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.4" fill="none"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
                 ${renderContactIcons ? renderContactIcons() : ''}
               </div>
             </div>
-            <h3 class="social-section-title">${t('followMe')}</h3>
-            <div class="social-links">
-              ${renderSocialLinks()}
-            </div>
+            <!-- Social grid removed per layout preference — contact icons are next to the email above -->
           </div>
         </section>
 
         <footer class="footer">
           <div class="footer-content">
-            <div class="footer-logo">mr7li0</div>
-            <p class="footer-text">${name} - ${title}</p>
-            <p class="footer-copyright">© <span class="footer-year">${currentYear}</span> ${t('allRightsReserved')}</p>
-            <div class="footer-social" id="footerSocial"></div>
+            <div class="footer-left">
+              <div class="footer-logo">mr7li0</div>
+              <p class="footer-text">${name} - ${title}</p>
+            </div>
+            <div class="footer-center">
+              <p class="footer-copyright">© <span class="footer-year">${currentYear}</span> ${t('allRightsReserved')}</p>
+            </div>
+            <div class="footer-right">
+              <div class="footer-social" id="footerSocial"></div>
+            </div>
           </div>
         </footer>
       `;
@@ -2424,7 +2432,7 @@
                 ${images.map((imageUrl, index) => `
                   <div class="gallery-item" onclick="openLightbox(${index})">
                     <img 
-                      src="${imageUrl}" 
+                      src="${normalizePath(imageUrl)}" 
                       alt="${subcategory.title[currentLang]} ${index + 1}" 
                       class="gallery-image" 
                       loading="lazy"
@@ -2463,23 +2471,26 @@
     }
 
     function renderContactIcons() {
-      if (!CONFIG.contact) return '';
+      const DIRECT = { instagram: 'https://ig.me/m/mr7li0', telegram: 'https://t.me/mr7lio' };
+      const inst = (CONFIG.contact && CONFIG.contact.instagram) || DIRECT.instagram;
+      const tel = (CONFIG.contact && CONFIG.contact.telegram) || DIRECT.telegram;
       const parts = [];
-      if (CONFIG.contact.instagram) {
-        parts.push(`<a class="contact-icon" href="${CONFIG.contact.instagram}" target="_blank" rel="noopener noreferrer" aria-label="contact-instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`);
-      }
-      if (CONFIG.contact.telegram) {
-        parts.push(`<a class="contact-icon" href="${CONFIG.contact.telegram}" target="_blank" rel="noopener noreferrer" aria-label="contact-telegram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 3L3.5 10.4c-.8.3-.8 1.2.2 1.5L8 13.6l2.1 5.6c.3.8 1.3.9 1.8.2L21 3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`);
-      }
+      const smallIcons = {
+        instagram: '<svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>',
+        telegram: '<svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>'
+      };
+
+      if (inst) parts.push(`<a class="contact-btn" href="${inst}" target="_blank" rel="noopener noreferrer" aria-label="contact-instagram">${smallIcons.instagram}</a>`);
+      if (tel) parts.push(`<a class="contact-btn" href="${tel}" target="_blank" rel="noopener noreferrer" aria-label="contact-telegram">${smallIcons.telegram}</a>`);
       return parts.join('');
     }
 
     function renderCornerSocials() {
       const smallIcons = {
-        behance: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M6.938 4.503c.702 0 1.34.06 1.92.188.577.13 1.07.33 1.485.61.41.28.733.65.96 1.12.225.47.34 1.05.34 1.73 0 .74-.17 1.36-.507 1.86-.338.5-.837.9-1.502 1.22.906.26 1.576.72 2.022 1.37.448.66.665 1.45.665 2.36 0 .75-.13 1.39-.41 1.93-.28.55-.67 1-1.16 1.35-.48.348-1.05.6-1.67.767-.61.165-1.252.254-1.91.254H0V4.51h6.938v-.007zM16.94 16.665c.44.428 1.073.643 1.894.643.59 0 1.1-.148 1.53-.447.424-.29.68-.61.78-.94h2.588c-.403 1.28-1.048 2.2-1.9 2.75-.85.56-1.884.83-3.08.83-.837 0-1.584-.13-2.272-.4-.673-.27-1.24-.65-1.72-1.14-.464-.49-.823-1.08-1.077-1.77-.253-.69-.373-1.45-.373-2.27 0-.803.135-1.54.403-2.23.27-.7.644-1.28 1.12-1.79.495-.51 1.063-.895 1.736-1.194.678-.297 1.407-.447 2.17-.447.915 0 1.71.19 2.387.57.676.382 1.227.882 1.65 1.53.423.64.71 1.36.853 2.15.144.79.18 1.58.12 2.37h-7.69c0 .84.28 1.632.71 2.065l-.08.03zm-10.24.05c.317 0 .62-.03.906-.093.29-.06.548-.165.763-.3.21-.135.39-.328.52-.583.13-.24.19-.57.19-.96 0-.75-.22-1.29-.64-1.62-.43-.32-.99-.48-1.69-.48H3.24v4.05H6.7v-.03zm13.607-5.65c-.352-.385-.94-.592-1.657-.592-.468 0-.855.074-1.166.238-.302.15-.55.35-.74.59-.19.24-.317.48-.392.75-.075.26-.12.5-.135.71h4.762c-.07-.75-.32-1.39-.68-1.79v.094zM6.52 10.45c.574 0 1.05-.134 1.425-.412.374-.27.554-.72.554-1.338 0-.344-.07-.625-.18-.846-.13-.22-.3-.39-.5-.512-.21-.124-.45-.21-.72-.257-.27-.053-.56-.074-.84-.074H3.23v3.44h3.29z"/></svg>',
-        tiktok: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>',
-        instagram: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>',
-        telegram: '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>'
+        behance: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M6.938 4.503c.702 0 1.34.06 1.92.188.577.13 1.07.33 1.485.61.41.28.733.65.96 1.12.225.47.34 1.05.34 1.73 0 .74-.17 1.36-.507 1.86-.338.5-.837.9-1.502 1.22.906.26 1.576.72 2.022 1.37.448.66.665 1.45.665 2.36 0 .75-.13 1.39-.41 1.93-.28.55-.67 1-1.16 1.35-.48.348-1.05.6-1.67.767-.61.165-1.252.254-1.91.254H0V4.51h6.938v-.007zM16.94 16.665c.44.428 1.073.643 1.894.643.59 0 1.1-.148 1.53-.447.424-.29.68-.61.78-.94h2.588c-.403 1.28-1.048 2.2-1.9 2.75-.85.56-1.884.83-3.08.83-.837 0-1.584-.13-2.272-.4-.673-.27-1.24-.65-1.72-1.14-.464-.49-.823-1.08-1.077-1.77-.253-.69-.373-1.45-.373-2.27 0-.803.135-1.54.403-2.23.27-.7.644-1.28 1.12-1.79.495-.51 1.063-.895 1.736-1.194.678-.297 1.407-.447 2.17-.447.915 0 1.71.19 2.387.57.676.382 1.227.882 1.65 1.53.423.64.71 1.36.853 2.15.144.79.18 1.58.12 2.37h-7.69c0 .84.28 1.632.71 2.065l-.08.03zm-10.24.05c.317 0 .62-.03.906-.093.29-.06.548-.165.763-.3.21-.135.39-.328.52-.583.13-.24.19-.57.19-.96 0-.75-.22-1.29-.64-1.62-.43-.32-.99-.48-1.69-.48H3.24v4.05H6.7v-.03zm13.607-5.65c-.352-.385-.94-.592-1.657-.592-.468 0-.855.074-1.166.238-.302.15-.55.35-.74.59-.19.24-.317.48-.392.75-.075.26-.12.5-.135.71h4.762c-.07-.75-.32-1.39-.68-1.79v.094zM6.52 10.45c.574 0 1.05-.134 1.425-.412.374-.27.554-.72.554-1.338 0-.344-.07-.625-.18-.846-.13-.22-.3-.39-.5-.512-.21-.124-.45-.21-.72-.257-.27-.053-.56-.074-.84-.074H3.23v3.44h3.29z"/></svg>',
+        tiktok: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>',
+        instagram: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>',
+        telegram: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>'
       };
 
       return Object.entries(CONFIG.social || {}).map(([platform, url]) => `
@@ -2497,6 +2508,25 @@
         if (top) top.innerHTML = html;
         if (foot) foot.innerHTML = html;
       } catch (e) { console.warn('Failed to render corner socials', e); }
+    }
+
+    function scrollToAccounts(){
+      const foot = document.getElementById('footerSocial');
+      if(foot){
+        foot.scrollIntoView({behavior:'smooth', block:'center'});
+        foot.classList.add('highlight');
+        setTimeout(()=> foot.classList.remove('highlight'), 1200);
+      } else {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }
+    }
+
+    function normalizePath(path){
+      if(!path) return path;
+      if(/^https?:\/\//i.test(path) || path.startsWith('data:') || path.startsWith('blob:')) return path;
+      if(path.startsWith('./') || path.startsWith('../')) return path;
+      if(path.startsWith('/')) path = path.slice(1);
+      return './' + path;
     }
 
     const revealObserver = new IntersectionObserver((entries) => {
@@ -2635,7 +2665,7 @@
     }
 
     function showLightbox() {
-      const imageUrl = lightboxImages[currentLightboxIndex];
+      const imageUrl = normalizePath(lightboxImages[currentLightboxIndex]);
       const totalImages = lightboxImages.length;
       
       console.log('Opening lightbox for:', imageUrl);
@@ -2810,7 +2840,7 @@
     updateNavText();
     (async function loadConfigAndRender(){
       try{
-        const res = await fetch('data/config.json', {cache: 'no-cache'});
+        const res = await fetch('./data/config.json', {cache: 'no-cache'});
         if(res && res.ok){
           const cfg = await res.json();
           Object.keys(cfg).forEach(k => { CONFIG[k] = cfg[k]; });
@@ -2837,7 +2867,25 @@
 
 
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9bae676f33c032ae',t:'MTc2NzkwMzcxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
   <script src="js/app.js" defer></script>
+
+  <script>
+    // Ensure the main content doesn't hide under the fixed top nav: set #app padding dynamically
+    (function adjustNavSpacing(){
+      const nav = document.querySelector('.top-nav');
+      const app = document.getElementById('app');
+      if(!nav || !app) return;
+      function update(){
+        const h = nav.offsetHeight || 80;
+        app.style.paddingTop = h + 'px';
+      }
+      // update on load/resize and when nav children change
+      window.addEventListener('resize', update);
+      window.addEventListener('load', update);
+      const mo = new MutationObserver(update);
+      mo.observe(nav, { attributes: true, childList: true, subtree: true });
+      update();
+    })();
+  </script>
 </body>
 </html>
